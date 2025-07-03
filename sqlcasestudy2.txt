@@ -1,0 +1,275 @@
+mysql> show tables;
++-----------------------+
+| Tables_in_clique_bait |
++-----------------------+
+| campaign_identifier   |
+| event_identifier      |
+| events                |
+| page_hierarchy        |
+| users                 |
++-----------------------+
+
+
+
+mysql> select * from campaign_identifier;
++-------------+----------+------------------+---------------------+---------------------+
+| campaign_id | products | campaign_name    | start_date          | end_date            |
++-------------+----------+------------------+---------------------+---------------------+
+|         101 | A        | Summer Sale      | 2025-06-01 00:00:00 | 2025-06-30 00:00:00 |
+|         102 | B        | Winter Deals     | 2025-01-01 00:00:00 | 2025-01-31 00:00:00 |
+|         103 | C        | Flash Friday     | 2025-07-01 00:00:00 | 2025-07-02 00:00:00 |
+|         104 | D        | Weekend Rush     | 2025-06-20 00:00:00 | 2025-06-22 00:00:00 |
+|         105 | E        | Super Saver      | 2025-04-01 00:00:00 | 2025-04-15 00:00:00 |
+|         106 | F        | Mega Fest        | 2025-05-01 00:00:00 | 2025-05-10 00:00:00 |
+|         107 | G        | New Launch       | 2025-06-15 00:00:00 | 2025-06-25 00:00:00 |
+|         108 | H        | Clearance        | 2025-03-01 00:00:00 | 2025-03-10 00:00:00 |
+|         109 | I        | Buy1Get1         | 2025-07-05 00:00:00 | 2025-07-07 00:00:00 |
+|         110 | J        | Mid-Year Madness | 2025-07-01 00:00:00 | 2025-07-15 00:00:00 |
++-------------+----------+------------------+---------------------+---------------------+
+10 rows in set (0.00 sec)
+
+
+mysql> select * from event_identifier;
++------------+-------------+
+| event_type | event_name  |
++------------+-------------+
+|          1 | Page View   |
+|          2 | Add to Cart |
+|          3 | Checkout    |
+|          4 | Purchase    |
+|          5 | Click Ad    |
+|          6 | Wishlist    |
+ |         10 | Search      |
++------------+-------------+
+10 rows in set (0.00 sec)
+s
+mysql> select * from events;
++----------+-----------+---------+------------+-----------------+---------------------+
+| visit_id | cookie_id | page_id | event_type | sequence_number | event_time          |
++----------+-----------+---------+------------+-----------------+---------------------+
+| V001     | C001      |       1 |          1 |               1 | 2025-06-01 10:00:00 |
+| V002     | C001      |       2 |          2 |               2 | 2025-06-01 10:05:00 |
+| V003     | C002      |       3 |          3 |               1 | 2025-06-02 11:00:00 |
+| V004     | C003      |       4 |          4 |               1 | 2025-06-03 12:00:00 |
+| V005     | C004      |       5 |          1 |               1 | 2025-06-04 09:00:00 |
+| V006     | C005      |       6 |          5 |               1 | 2025-06-05 08:00:00 |
+| V007     | C006      |       7 |          6 |               1 | 2025-06-06 07:00:00 |
+| V008     | C007      |       8 |          7 |               1 | 2025-06-07 06:00:00 |
+| V009     | C008      |       9 |          8 |               1 | 2025-06-08 05:00:00 |
+| V010     | C009      |      10 |          9 |               1 | 2025-06-09 04:00:00 |
+| V021     | C001      |       1 |          1 |               1 | 2025-01-10 09:00:00 |
+| V022     | C002      |       2 |          2 |               1 | 2025-02-15 10:30:00 |
+| V023     | C003      |       3 |          3 |               1 | 2025-03-20 11:00:00 |
+| V024     | C004      |       4 |          4 |               1 | 2025-04-05 15:45:00 |
+| V025     | C005      |       5 |          1 |               1 | 2025-05-25 08:20:00 |
+| V026     | C006      |       6 |          2 |               1 | 2025-06-18 13:50:00 |
+| V027     | C007      |       7 |          3 |               1 | 2025-07-21 16:10:00 |
+| V028     | C008      |       8 s|               1 | 2025-08-09 14:40:00 |
+| V029     | C009      |       9 |          5 |               1 | 2025-09-12 17:30:00 |
+| V030     | C010      |      10 |          6 |               1 | 2025-10-01 12:00:00 |
++----------+-----------+---------+------------+-----------------+---------------------+
+
+
+
+
+
+mysql> select * from page_hierarchy;
++---------+-------------+------------------+------------+
+| page_id | page_name   | product_category | product_id |
++---------+-------------+------------------+------------+
+|       1 | Home        | General          |       1001 |
+|       2 | Electronics | Gadgets          |       2001 |
+|       3 | Fashion     | Clothing         |       3001 |
+|       4 | Beauty      | Cosmetic         |       4001 |
+|       5 | Grocery     | Food             |       5001 |
+|       6 | Sports      | Fitness          |       6001 |
+|       7 | Books       | Education        |       7001 |
+|       8 | Mobiles     | Gadgets          |       2002 |
+|       9 | Footwear    | Clothing         |       3002 |
+|      10 | Kitchen     | Home             |       8001 |
++---------+-------------+------------------+------------+
+10 rows in set (0.00 sec)
+
+mysql> select * from users;
++---------+-----------+---------------------+
+| user_id | cookie_id | start_date          |
++---------+-----------+---------------------+
+|       1 | C001      | 2025-06-01 00:00:00 |
+|       2 | C002      | 2025-06-02 00:00:00 |
+|       3 | C003      | 2025-06-03 00:00:00 |
+|       4 | C004      | 2025-06-04 00:00:00 |
+|       5 | C005      | 2025-06-05 00:00:00 |
+|       6 | C006      | 2025-06-06 00:00:00 |
+|       7 | C007      | 2025-06-07 00:00:00 |
+|       8 | C008      | 2025-06-08 00:00:00 |
+|       9 | C009      | 2025-06-09 00:00:00 |
+|      10 | C010      | 2025-06-10 00:00:00 |
++---------+-----------+---------------------+
+
+
+question 1 : How many users are there 
+
+
+mysql> select count(distinct user_id) from users;
++-------------------------+
+| count(distinct user_id) |
++-------------------------+
+|                      10 |
++-------------------------+
+
+
+
+question 2 : how many cookies does each user have on an average 
+
+mysql> select user_id,count(distinct cookie_id) from users group by user_id;
++---------+---------------------------+
+| user_id | count(distinct cookie_id) |
++---------+---------------------------+
+|       1 |                         1 |
+|       2 |                         1 |
+|       3 |                         1 |
+|       4 |                         1 |
+|       5 |                         1 |
+|       6 |                         1 |
+|       7 |                         1 |
+|       8 |                         1 |
+|       9 |                         1 |
+|      10 |                         1 |
++---------+---------------------------+
+
+
+
+question 3 : What is the unique number of visits by all users per month?
+
+mysql> select month(event_time) as month ,count(distinct visit_id) as unique_visit from events group by month(event_time);
++-------+--------------+
+| month | unique_visit |
+|     2 |            1 |
+|     3 |            1 |
+|     4 |            1 |
+|     5 |            1 |
+|     6 |           11 |
+|     7 |            1 |
+|     8 |            1 |
+|     9 |            1 |
+|    10 |            1 |
++-------+--------------+
+10 rows in set (0.00 sec)
+
+
+
+question 4 : What is the number of events for each event type?
+
+
+mysql> select ei.event_type,ei.event_name,count(e.event_type) as no_of_events from event_identifier ei join events e on ei.event_type = e.event_type group by e.event_type,ei.event_name;
++------------+-------------+--------------+
+| event_type | event_name  | no_of_events |
++------------+-------------+--------------+
+|          1 | Page View   |            4 |
+|          2 | Add to Cart |            3 |
+|          3 | Checkout    |            3 |
+|          4 | Purchase    |            3 |
+|          5 | Click Ad    |            2 |
+|          6 | Wishlist    |            2 |
+|          7 | Remove Item |            1 |
+|          8 | Login       |            1 |
+|          9 | Logout      |            1 |
++------------+-------------+--------------+
+
+
+question 5 : What percentage of all events are purchases?
+
+mysql> select 100*sum(case when event_name = 'purchase' then 1 else 0 end)/count(*) as percentage from event_identifier ei join events e on e.event_type = ei.event_type;
++------------+
+| percentage |
++------------+
+|    15.0000 |
++------------+
+
+
+
+
+question 6 :What is the percentage of visits which viewed the checkout page but did not have a purchase event?
+
+mysql> SELECT
+    ->   ROUND(
+    ->     100.0 * COUNT(DISTINCT CASE
+    ->       WHEN ei.event_name = 'Checkout' AND v.visit_id NOT IN (
+    ->         SELECT visit_id
+    ->         FROM events e2
+    ->         JOIN event_identifier ei2 ON e2.event_type = ei2.event_type
+    ->         WHERE ei2.event_name = 'Purchase'
+    ->       )
+    ->     THEN v.visit_id END) /
+    ->     COUNT(DISTINCT CASE WHEN ei.event_name = 'Checkout' THEN v.visit_id END),
+    ->     2
+    ->   ) AS percent_checkout_without_purchase
+    -> FROM events v
+    -> JOIN event_identifier ei ON v.event_type = ei.event_type;
++-----------------------------------+
+| percent_checkout_without_purchase |
++-----------------------------------+
+|                            100.00 |
++-----------------------------------+
+
+
+
+
+question 7 : What is the total number of events per product category?
+
+mysql> SELECT h.product_category , count(*) from events e join page_hierarchy h on e.page_id = h.page_id group by h.product_category;
++------------------+----------+
+| product_category | count(*) |
++------------------+----------+
+| General          |        2 |
+| Gadgets          |        4 |
+| Clothing         |        4 |
+| Cosmetic         |        2 |
+| Food             |        2 |
+| Fitness          |        2 |
+| Education        |        2 |
+| Home             |        2 |
++------------------+----------+
+8 rows in set (0.00 sec)
+
+
+
+question 8 :  What is the number of Page Views and Add to Carts for each product category?
+
+mysql> select ph.product_category,sum(case when ei.event_name = 'add to cart' then 1 else 0 end) as add_to_cart,sum(case when ei.event_name = 'page view' then 1 else 0 end) as page_view from page_hierarchy as ph join events e on e.page_id = ph.page_id join event_identifier ei on ei.event_type = e.event_type group by ph.product_category order by product_category;
++------------------+-------------+-----------+
+| product_category | add_to_cart | page_view |
++------------------+-------------+-----------+
+| Clothing         |           0 |         0 |
+| Cosmetic         |           0 |         0 |
+| Education        |           0 |         0 |
+| Fitness          |           1 |         0 |
+| Food             |           0 |         2 |
+| Gadgets          |           2 |         0 |
+| General          |           0 |         2 |
+| Home             |           0 |         0 |
++------------------+-------------+-----------+
+8 rows in set (0.00 sec)
+
+
+
+question 9 : What are the top 3 products by purchases?
+
+mysql> SELECT
+    ->   ph.page_name AS product_name,
+    ->   COUNT(*) AS purchase_count
+    -> FROM events e
+    -> JOIN event_identifier ei ON e.event_type = ei.event_type
+    -> JOIN page_hierarchy ph ON e.page_id = ph.page_id
+    -> WHERE ei.event_name = 'Purchase'
+    -> GROUP BY ph.page_name
+    -> ORDER BY purchase_count DESC
+    -> LIMIT 3;
++--------------+----------------+
+| product_name | purchase_count |
++--------------+----------------+
+| Beauty       |              2 |
+| Mobiles      |              1 |
++--------------+----------------+
+2 rows in set (0.01 sec)
+
