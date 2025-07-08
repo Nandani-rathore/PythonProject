@@ -1,0 +1,303 @@
+mysql> show tables ;
++-------------------------+
+| Tables_in_dannys_dinner |
++-------------------------+
+| members                 |
+| menu                    |
+| sales                   |
++-------------------------+
+3 rows in set (0.09 sec)
+
+mysql> select * from sales;
++-------------+------------+------------+
+| customer_id | order_date | product_id |
++-------------+------------+------------+
+| A           | 2021-01-01 |          2 |
+| A           | 2021-01-07 |          2 |
+| A           | 2021-01-10 |          3 |
+| A           | 2021-01-11 |          3 |
+| A           | 2021-01-11 |          3 |
+| B           | 2021-01-01 |          2 |
+| B           | 2021-01-02 |          2 |
+| B           | 2021-01-04 |          1 |
+| B           | 2021-01-11 |          1 |
+| B           | 2021-01-16 |          3 |
+| B           | 2021-02-01 |          3 |
+| C           | 2021-01-01 |          3 |
+| C           | 2021-01-01 |          3 |
+| C           | 2021-01-07 |          3 |
++-------------+------------+------------+
+15 rows in set (0.01 sec)
+
+mysql> select * from menu;
++------------+--------------+-------+
+| product_id | product_name | price |
++------------+--------------+-------+
+|          1 | sushi        |    10 |
+|          2 | curry        |    15 |
+|          3 | ramen        |    12 |
++------------+--------------+-------+
+3 rows in set (0.00 sec)
+
+mysql> select * from members;
++-------------+------------+
+| customer_id | join_date  |
++-------------+------------+
+| A           | 2021-01-07 |
+| B           | 2021-01-09 |
++-------------+------------+
+2 rows in set (0.00 sec)
+
+
+
+
+
+
+
+--------------------- questions ------------------------
+
+question 1 : what is the total amount each customer spent at the restaurant ?
+
+mysql> select s.customer_id , sum(m.price) as amount_spent from sales s join menu m on s.product_id = m.product_id group by s.customer_id;
++-------------+--------------+
+| customer_id | amount_spent |
++-------------+--------------+
+| A           |           76 |
+| B           |           74 |
+| C           |           36 |
++-------------+--------------+
+3 rows in set (0.00 sec)
+
+
+
+question 2 :how many days has each customer visited the restaurent ?
+
+mysql> select customer_id , count(distinct order_date) as No_of_days_customer_visit_restaurant from sales group by customer_id;
++-------------+--------------------------------------+
+| customer_id | No_of_days_customer_visit_restaurant |
++-------------+--------------------------------------+
+| A           |                                    4 |
+| B           |                                    6 |
+| C           |                                    2 |
++-------------+--------------------------------------+
+3 rows in set (0.00 sec)
+
+
+question 3 : What was the first item from the menu purchased by each customer?
+
+ select s.customer_id, s.order_date,m.product_name from sales  s join 
+( select customer_id,min(order_date) as first_oredr_date from sales group by customer_id ) 
+first_order on s.customer_id = first_order.customer_id and s.order_date = first_order.first_oredr_date 
+join menu m on s.product_id = m.product_id;
+
++-------------+------------+--------------+
+| customer_id | order_date | product_name |
++-------------+------------+--------------+
+| A           | 2021-01-01 | sushi        |
+| A           | 2021-01-01 | curry        |
+| B           | 2021-01-01 | curry        |
+| C           | 2021-01-01 | ramen        |
+| C           | 2021-01-01 | ramen        |
++-------------+------------+--------------+
+5 rows in set (0.00 sec)
+
+
+
+question 4 : what is the most purchased item on the menu and how many times was it purchased by all customer ?
+
+select s.product_id,m.product_name as most_purchased_item , count(*) as count_of_purchased from sales s 
+join menu m on s.product_id = m.product_id group by most_purchased_item,s.product_id order by count_of_purchased desc limit 1;          
+
+
++------------+---------------------+--------------------+
+| product_id | most_purchased_item | count_of_purchased |
++------------+---------------------+--------------------+
+|          3 | ramen               |                  8 |
++------------+---------------------+--------------------+
+
+
+
+question 5 : which item is most popular for each customer ?
+
+ select s.customer_id , s.product_id,m.product_name as popular_item , count(*) as count_of_order
+ from sales s join menu m on s.product_id = m.product_id group by customer_id,product_name,product_id
+    -> having count(*) = (
+    -> select max(item_count) from (select count(*) as item_count from sales where customer_id = s.customer_id group by product_id) as customer_items );
+
+
++-------------+------------+--------------+----------------+
+| customer_id | product_id | popular_item | count_of_order |
++-------------+------------+--------------+----------------+
+| A           |          3 | ramen        |              3 |
+| B           |          2 | curry        |              2 |
+| B           |          1 | sushi        |              2 |
+| B           |          3 | ramen        |              2 |
+| C           |          3 | ramen        |              3 |
++-------------+------------+--------------+----------------+
+
+
+
+
+
+
+
+question 6 : which item purchased by the customer after they become a member ?
+
+select s.customer_id,m.product_name as first_order,s.order_date from sales s join menu m 
+on s.product_id = m.product_id join members mem on mem.customer_id = s.customer_id where
+ s.order_date >= mem.join_date and s.order_date = (select min(order_date) from sales where 
+customer_id = s.customer_id and order_date >= mem.join_date) order by s.customer_id;
+
++-------------+-------------+------------+
+| customer_id | first_order | order_date |
++-------------+-------------+------------+
+| A           | curry       | 2021-01-07 |
+| B           | sushi       | 2021-01-11 |
++-------------+-------------+------------+
+
+
+question 7 : which item was purchased just before the customer become a member ? 
+
+ect s.customer_id , m.product_name last_item_before_membership , s.order_date from sales s 
+join menu m on s.product_id = m.product_id join members mem on mem.customer_id = s.customer_id 
+where s.order_date < mem.join_date and s.order_date = (select max(order_date) from sales where
+ customer_id = s.customer_id and order_date < mem.join_date) order by c
+
++-------------+-----------------------------+------------+
+| customer_id | last_item_before_membership | order_date |
++-------------+-----------------------------+------------+
+| A           | sushi                       | 2021-01-01 |
+| A           | curry                       | 2021-01-01 |
+| B           | sushi                       | 2021-01-04 |
++-------------+-----------------------------+------------+
+
+
+question 8 : what is the total item and amount spent for each member before they become a member ?
+
+select s.customer_id , count(*) as no_of_items , sum(m.price) as total_price from sales s join menu m 
+on m.product_id = s.product_id join members mem on s.customer_id = mem.customer_id where s.order_date < mem.join_date 
+group by customer_id order by customer_id;
+
+
++-------------+-------------+-------------+
+| customer_id | no_of_items | total_price |
++-------------+-------------+-------------+
+| A           |           2 |          25 |
+| B           |           3 |          40 |
++-------------+-------------+-------------+
+
+
+question 9 : If each item’s price is multiplied by 10 to get “points,” and
+ members get 2x points for sushi, show customer ID, product name, and final points earned
+
+mysql> SELECT
+    ->   s.customer_id,
+    ->   SUM(
+    ->     CASE
+    ->       WHEN m.product_name = 'sushi' AND mem.customer_id IS NOT NULL THEN 10 * m.price * 2
+    ->       ELSE 10 * m.price
+    ->     END
+    ->   ) AS total_points
+    -> FROM sales s
+    -> JOIN menu m ON s.product_id = m.product_id
+    -> LEFT JOIN members mem ON s.customer_id = mem.customer_id
+    -> GROUP BY s.customer_id
+    -> ORDER BY s.customer_id;
+
++-------------+--------------+
+| customer_id | total_points |
++-------------+--------------+
+| A           |          860 |
+| B           |          940 |
+| C           |          360 |
++-------------+--------------+
+3 rows in set (0.01 sec)
+
+
+question 10 : In the first week after a customer joins the program (including join day), 
+they earn points only for items they purchased as a member. Which customers earned points in
+their first week, and how many?
+
+
+
+mysql> SELECT
+    ->   s.customer_id,
+    ->   SUM(
+    ->     CASE
+    ->       WHEN m.product_name = 'sushi' THEN 10 * m.price * 2
+    ->       ELSE 10 * m.price
+    ->     END
+    ->   ) AS points_earned_first_week
+    -> FROM sales s
+    -> JOIN menu m ON s.product_id = m.product_id
+    -> JOIN members mem ON s.customer_id = mem.customer_id
+    -> WHERE s.order_date BETWEEN mem.join_date AND DATE_ADD(mem.join_date, INTERVAL 6 DAY)
+    -> GROUP BY s.customer_id
+    -> ORDER BY s.customer_id;
++-------------+--------------------------+
+| customer_id | points_earned_first_week |
++-------------+--------------------------+
+| A           |                      510 |
+| B           |                      200 |
++-------------+--------------------------+
+2 rows in set (0.01 sec)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
